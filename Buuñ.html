@@ -5,6 +5,7 @@
     <title>Buuñ</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+#fps-counter { position: absolute; top: 15px; right: 20px; color: #f1c40f; font-size: 18px; text-shadow: 2px 2px #000; pointer-events: none; z-index: 20; font-family: 'Courier New', monospace; font-weight: bold; }
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Arial Black', sans-serif; transition: filter 0.3s; }
         #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
         #header { position: absolute; top: 10px; width: 100%; text-align: center; color: #f1c40f; font-size: 24px; text-shadow: 3px 3px #c0392b; }
@@ -41,6 +42,11 @@
 <body>
 
     <div id="start-screen">
+<div id="msg-console">
+            > CLICK IZQUIERDO: DISPARAR | CLICK DERECHO: APUNTAR<br>
+            > SHIFT: DASH | Q: ESCUDO | E: USAR BOTI<br>
+            > F3: TERCERA PERSONA | ESC: MENU DE PAUSA
+        </div>
         <div class="pause-box">
             <h2 style="color:#f1c40f; margin-top:0;">Buuñ</h2>
             <button class="mode-btn" style="border-color: #008f39; color: #008f39;" onclick="startGame('normal')">Normal</button>
@@ -51,10 +57,13 @@
             <button class="mode-btn" style="border-color: #e74c3c; color: #e74c3c;" onclick="startGame('un-toque')">Un toque (1 HP)</button>
             <button class="mode-btn" style="border-color: #2ecc71; color: #2ecc71;" onclick="startGame('infection')">Infection (Reloj)</button>
             <button class="mode-btn" style="border-color: #ff66b2; color: #ff66b2;" onclick="startGame('april-normal')">""normal""</button>
+            <hr style="border: 1px solid #000; margin: 15px 0;">
+            <button class="mode-btn" style="border-color: #888888; color: #888888; margin-top: 20px;" onclick="startGame('random')">Random 🔁</button>
         </div>
     </div>
 
     <div id="game-ui">
+<div id="fps-counter">60 FPS</div>
         <div id="flash"></div>
         <div id="header">Buuñ</div>
         <div id="parca-alert">EL DUO DE LA PARCA SPAWNEO</div>
@@ -70,7 +79,6 @@
         <div id="weapon-bar-container">
             <div class="bar-bg" title="Cooldown Botis"><div id="weapon-bar"></div></div>
         </div>
-
         <div id="msg-console">
             > CLICK IZQUIERDO: DISPARAR | CLICK DERECHO: APUNTAR<br>
             > SHIFT: DASH | Q: ESCUDO | E: USAR BOTI<br>
@@ -86,16 +94,25 @@
     </div>
 
     <div id="pause-menu">
+<div id="msg-console">
+            > CLICK IZQUIERDO: DISPARAR | CLICK DERECHO: APUNTAR<br>
+            > SHIFT: DASH | Q: ESCUDO | E: USAR BOTI<br>
+            > F3: TERCERA PERSONA | ESC: MENU DE PAUSA
+        </div>
         <div class="pause-box">
             <h2 style="color:#f1c40f; margin-top:0;">MENÚ DE PAUSA</h2>
-            <div class="setting-row">
-                <label>FOV</label>
-                <input type="range" id="fov-slider" min="60" max="110" value="75">
-            </div>
-            <div class="setting-row">
-                <label>SENSIBILIDAD</label>
-                <input type="range" id="sens-slider" min="0.1" max="3" step="0.1" value="1">
-            </div>
+           <div class="setting-row">
+    <label>FOV: <span id="fov-val-text" style="color: #fff;">75</span></label>
+    <input type="range" id="fov-slider" min="60" max="110" value="75">
+</div>
+<div class="setting-row">
+    <label>SENSIBILIDAD: <span id="sens-val-text" style="color: #fff;">1</span></label>
+    <input type="range" id="sens-slider" min="0.1" max="3" step="0.1" value="1">
+</div>
+<div class="setting-row">
+    <label>VOLUMEN: <span id="vol-val-text" style="color: #fff;">0.25</span></label>
+    <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.25">
+</div>
             <div class="setting-row">
                 <label>SKIN</label>
                 <select id="skin-select">
@@ -111,9 +128,7 @@
                     <option value="invertido">Invertido (Locura total)</option>
                     <option value="rgb">Skin RGB</option>
                     <option value="holograma">Skin Holograma</option>
-                    <option value="racism" style="background-color: #ff66b2; color: #000;">Say no to racism</option>
-<option value="gemininopuedemas" style="background-color: #ff0000; color: #000;">ERROR</option>
-<option value="argentinapapa" style="background-color: #75aadb; color: #000;">Argentina</option>
+                    <option value="enemigonormal" style="background-color: #e74c3c; color: #000;">Enemigo normal</option>
                 </select>
             </div>
             <div class="setting-row">
@@ -145,7 +160,7 @@ audioBlockHit.volume = 0.25;
         const playerController = new THREE.Object3D();
         
         let player = { hp: 150, kills: 0, dmg: 25, medkits: 0, lastShot: 0, cooldown: 750, isAiming: false }; 
-        let enemyBaseHp = 150; 
+        let enemyBaseHp = (150 + player.kills * 5); 
         let floor;
         let enemies = [], bullets = [], structures = [], particles = [], chests = [], keys = {};
         
@@ -155,6 +170,8 @@ audioBlockHit.volume = 0.25;
         let isShooting = false;
         let shakeIntensity = 0;
         let lastRgbInterval = 0;
+let lastFpsTime = performance.now();
+let framesThisSecond = 0;
         
         let canDash = true;
         const dashCooldownTime = 1700; 
@@ -183,9 +200,7 @@ audioBlockHit.volume = 0.25;
             retro_2: { enemy: 0x7f2a1f, stalker: 0xcc8888, player: 0x330000, eye: 0x444400, gun: 0x222222, atomic: 0x0000ff }, 
             retro_1_5: { enemy: 0x000000, stalker: 0x333333, player: 0x111111, eye: 0x444444, gun: 0x111111, atomic: 0xffffff },
             invertido: { enemy: 0x888888, stalker: 0xcccccc, player: 0x888888, eye: 0x888888, gun: 0x888888, atomic: 0x000000 },
-            racism: { enemy: 0xe74c3c, stalker: 0xe74c3c, player: 0xe74c3c, eye: 0xe74c3c, gun: 0xe74c3c, atomic: 0xe74c3c },
-gemininopuedemas: { enemy: 0x000000, stalker: 0x4e545c, player: 0x1b1b1b, eye: 0x000000, gun: 0x000000, atomic: 0x8d9797 },
-argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xffffff, gun: 0xffffff, atomic: 0xffffff }
+            enemigonormal: { enemy: 0xe74c3c, stalker: 0xe74c3c, player: 0xe74c3c, eye: 0xe74c3c, gun: 0x333333, atomic: 0xe74c3c }
         };
 
         const playerModel = new THREE.Group();
@@ -280,7 +295,7 @@ argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xff
             group.add(body, visor, eyeL, eyeR);
             group.position.copy(pos);
             group.position.y = 2.5 * mult;
-            let hp = isBossVariant ? (isExtremeMode ? 50 * player.dmg : 30 * player.dmg) : (isExtremeMode ? 750 : 575);
+            let hp = isBossVariant ? (isExtremeMode ? 50 * (player.dmg + player.kills) : 30 * (player.dmg + player.kills)) : (isExtremeMode ? (750 + player.kills * 15) : (575 + player.kills * 15));
             if (currentGameMode === 'un-toque') hp = 1;
             group.userData = {
                 hp: hp,
@@ -300,12 +315,12 @@ argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xff
 
         function getEnemyStats(boss, isStalker, isImmortal, isSmall, isKamikaze = false, isAtomic = false, isStalkerBoss = false, isSniper = false) {
             let hp;
-            if (isSniper) hp = isExtremeMode ? 250 : 200;
-            else if (isAtomic) hp = 500 + (player.kills * 20);
-            else if (isStalkerBoss) hp = player.dmg * 20;
+            if (isSniper) hp = isExtremeMode ? (250 + player.kills * 5) : (200 + player.kills * 5);
+            else if (isAtomic) hp = isExtremeMode ? 10 * (player.dmg + (player.kills * 2.5)) : 5 * (player.dmg + (player.kills * 2));
+            else if (isStalkerBoss) hp = isExtremeMode ? 40 * (player.dmg + player.kills) : 20 * (player.dmg + player.kills);
             else if (isKamikaze) hp = isExtremeMode ? (100 + player.kills * 15) : (50 + player.kills * 15);
-            else if (boss) hp = isExtremeMode ? player.dmg * (20 + player.kills * 10) : player.dmg * (10 + player.kills * 5);
-            else if (isStalker) hp = isImmortal ? Infinity : (isExtremeMode ? 250 : 175);
+            else if (boss) hp = isExtremeMode ? 20 * (player.dmg + player.kills) : 10 * (player.dmg + player.kills);
+            else if (isStalker) hp = isImmortal ? Infinity : (isExtremeMode ? (250 + player.kills * 5) : (175 + player.kills * 5));
             else hp = isExtremeMode ? 200 : enemyBaseHp;
             if (currentGameMode === 'un-toque') hp = 1;
             
@@ -474,7 +489,15 @@ argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xff
             enemies.forEach(en => applySkinToEnemy(en));
         }
 
+        // LA MAGIA DEL MODO RANDOM OCURRE ACÁ ABAJO
         function startGame(mode) {
+            
+            // Si tocaste el botón Random, el juego tira los dados y elige un modo por vos
+            if (mode === 'random') {
+                const modosDisponibles = ['normal', 'extreme', 'double', 'lava', 'dyd', 'un-toque', 'infection', 'april-normal'];
+                mode = modosDisponibles[Math.floor(Math.random() * modosDisponibles.length)];
+            }
+
             currentGameMode = mode;
             isExtremeMode = (mode === 'extreme');
             gameStarted = true; isPaused = false;
@@ -587,11 +610,39 @@ argentinapapa: { enemy: 0x75aadb, stalker: 0xfcbf45, player: 0x843511, eye: 0xff
             playerController.rotation.y -= e.movementX * s; visualCamera.rotation.x -= e.movementY * s; 
             visualCamera.rotation.x = Math.max(-1.4, Math.min(1.4, visualCamera.rotation.x)); 
         });
+document.getElementById('vol-slider').addEventListener('input', (e) => {
+            const newVolume = parseFloat(e.target.value);
+            gameMusic.volume = newVolume;
+            shopMusic.volume = newVolume;
+            audioBlockHit.volume = newVolume;
+        });
+document.getElementById('fov-slider').addEventListener('input', (e) => {
+    document.getElementById('fov-val-text').innerText = e.target.value;
+});
+
+document.getElementById('sens-slider').addEventListener('input', (e) => {
+    document.getElementById('sens-val-text').innerText = e.target.value;
+});
+
+document.getElementById('vol-slider').addEventListener('input', (e) => {
+    const newVolume = parseFloat(e.target.value);
+    gameMusic.volume = newVolume;
+    shopMusic.volume = newVolume;
+    audioBlockHit.volume = newVolume;
+    document.getElementById('vol-val-text').innerText = newVolume.toFixed(2);
+});
 
         document.getElementById('resume-btn').addEventListener('click', resumeGame);
 
         function animate() {
             requestAnimationFrame(animate);
+framesThisSecond++;
+    const now = performance.now();
+    if (now - lastFpsTime >= 1000) {
+        document.getElementById('fps-counter').innerText = framesThisSecond + ' FPS';
+        framesThisSecond = 0;
+        lastFpsTime = now;
+    }
             if(!gameStarted || isPaused) { if(gameStarted) renderer.render(scene, visualCamera); return; }
             if (currentSkin === 'rgb') {
                 let currentInterval = Math.floor(Date.now() / 2000);
