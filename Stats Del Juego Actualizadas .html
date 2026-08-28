@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats del Juego</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            border: 1px solid #333;
+            padding: 30px;
+            background-color: #0a0a0a;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .highlight {
+            color: #58a6ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+<pre>
+Este archivo es donde estan la info de los enemigos
+los enemigos por cada kill que haces ganan mas daño y mas vida, siendo la formula: (vida del enemigo + las kills que tengas x 5 (o 15 en el caso del kamikaze) y en el caso de los bosses la formula es: la vida del boss x (el daño que hagas + las kills que tengas) o en el caso del kamikaze boss: vida del kamikaze boss x (el daño que hagas + (las kills que tengas x 2 o 2.5 en Super mega duper extreme demon😈)
+algunos datos pueden estar mal o/y desactualizados
+la vida de los boses no se basan en hp, si no en golpes, aunque hagas 100 de daño el boss solo se va a morir cuando le pegues los golpes necesarios para matarlo
+
+1-Jugador
+-info: no se. Fun-fact: tecnicamente fue la primera cosa que existio en el juego (antes que los enemigos)
+-velocidad: 0.45
+-velocidad en la version 2d: 5.0
+-Cuanto daño extra hace por kill: +2
+-Cuanto daño extra hace por kill en super mega duper extreme demon😈:+1.25
+-Vida: 150
+-daño con que empezas: 25
+-cooldown del dash: 1.7 segundos
+-tiempo que dura el escudo
+-cooldown del escudo: 20 segundos
+-cooldown de los botis: 5 segundos
+-cooldown de los botis en el modo El piso es lava: 2 segundos
+
+2-Enemigo normal
+-info: es uno de los 4 enemigos que disparan actualmente, es de color rojo (en hexadecimal e74c3c) y dispara un proyectil rojo. Fue el primer enemigo
+-velocidad: 0.16
+-velocidad en la version 2d:1 (creo)
+-daño:15
+-daño en super mega duper extreme demon😈:20
+-vida:150
+-vida en super mega duper extreme demon😈: 200
+
+3-Boss normal
+-info: es uno de los 4 enemigos que disparan actualmente, es igual que el enemigo normal pero mas grande y lento. Fue el segundo enemigo
+-Velocidad: 0.08
+-velocidad en la version 2d: 0.5
+-daño:15
+-daño en super mega duper extreme demon😈:60
+-vida: 10 golpes
+vida en super mega duper extreme demon😈: 20 golpes
+
+4-Stalker
+-info: es un enemigo cuerpo a cuerpo, es de color rosa/salmon (en hexadecimal ff8888). Fue el tercer enemigo
+-Velocidad: 0.48
+-velocidad en la version 2d: 5.1
+-daño:30
+-daño en super mega duper extreme demon😈:60
+-vida: 175
+-vida en super mega duper extreme demon😈: 250
+
+5-Stalker boss
+-info: es un enemigo cuerpo a cuerpo, es igual que el Stalker pero mas grande y lento. Fue el sexto enemigo enemigo (lo agregue a la par de el Kamikaze boss)
+-Velocidad: 0.24
+-velocidad en la version 2d: 1.5
+-daño:30
+-vida: 20 golpes
+-vida en super mega duper extreme demon😈: 40 golpes
+
+6-Kamikaze
+-info: explota cuando toca a el jugador, es de color bordo y rojo claro (el color rojo en hexadecimal ff0000 y color bordo en hexadecimal 440000). Fue el quinto enemigo enemigo (Creo)
+-velocidad:0.64
+-velocidad en la version 2d: 6.0
+-daño:50
+-daño en super mega duper extreme demon😈:100
+-vida:50
+-vida en super mega duper extreme demon😈: 100
+
+-pasiva "si, si, soy el que menos vida tiene, ¿como se lo digo?": el kamikaze gana 30% mas de vida por kill que el resto de enemigos
+
+7-Kamikaze boss (conocido en el codigo como "Atomic boss")
+-info:explota cuando toca a el jugador, es igual que el kamikaze solo que mas grande, lento, y solo usa el color rojo claro (ff0000). Fue el sexto enemigo enemigo (lo agregue a la par de el Stalker boss)
+-velocidad:0.32
+-velocidad en la version 2d: 3.0
+-daño:100
+-daño en super mega duper extreme demon😈:insta-kill (o 9999)
+-vida:5 golpes
+-vida en super mega duper extreme demon😈:10 golpes
+
+-pasiva "¿pensas que me gusta morir?": el kamikaze boss gana 100% mas de vida por kill con respecto a los otros bosses y en super mega duper extreme demon😈 ese 100% pasa a ser 150%
+
+8-Sniper
+-info:es uno de los 4 enemigos que disparan actualmente, es gris (en hexadecimal 808080) y spawnea en las estructuras. Es el octavo enemigo, y actualmente el ultimo
+-velocidad:0 (y aunque la cambies se quedara quieto en la estructura donde spawnee)
+-velocidad en la version 2d: 0
+-daño: 25% 75 y 75% 50 (esto es igual en super duper mega extreme demon😈)
+-vida:200
+-vida super duper mega extreme demon😈:250
+
+-pasiva "silencioso":es invisible al menos de que este a 30 unidades del juegador
+
+9-EL DUO DE LA PARCA (Stalkaze minion y Stalkaze boss)
+
+-info:son 2 de los 4 enemigos que disparan actualmente, los dos son morados (o en hexadecimal 8e44ad), disparan y explotan. Su objetivo es acabar con el jugador (o lo intentas). Spawnean al matar aunque sea un boss normal, Stalker boss y Kamikaze boss. Fueron los septimos enemigos
+-tienen 2 pasivas :
+
+-pasiva 1 "Yeah bro, do you really think i am stupid?": cuando el jugador activa el escudo estos 2 no podran explotar, a cambio, seran mas lentos
+
+-pasiva 2 "es que realmente somos de la parca bro": al igual que el kamikaze boss y kamikaze normal, estos 2 ganan mas vida por kill, en el caso del Stalkaze boss gana un 100% mas de vida por kills con respecto a los otros bosses (150% en super mega duper extreme demon😈) y en el caso del Stalkaze minion gana 30% mas de vida por kill con respecto a los otros enemigos
+
+9.25-Stalkaze minion
+-velocidad: 0.70 (el mas rapido)
+-velocidad en la version 2d: 7.0
+-velocidad con la pasiva "Yeah bro, do you really think i am stupid?": 0.24
+-velocidad con la pasiva "Yeah bro, do you really think i am stupid?" en la version 2d: no se
+-daño de bala: igual que el enemigo normal
+-daño cuerpo a cuerpo:70
+-daño cuerpo a cuerpo en super mega duper extreme demon😈:insta-kill
+-vida: 575
+-vida en super mega duper extreme demon😈: 750
+
+9.75-Stalkaze Boss
+-velocidad: 0.40
+-velocidad en la version 2d: 4.5
+-velocidad con la pasiva "Yeah bro, do you really think i am stupid?": 0.12
+-velocidad con la pasiva "Yeah bro, do you really think i am stupid?" en la version 2d: no se
+-daño de bala: igual que el boss normal
+-daño cuerpo a cuerpo: igual que el stalkaze minion
+-Vida: 30 golpes
+-vida en super mega duper extreme demon😈: 50 golpes
+
+10-Killer de Dye of Deaf
+-info: es blanco (aunque sea blanco puro este es su color en hexadecimal ffffff) y aparece en el modo "Dye of Deaf" (si, como ese juego) y en el modo ""NORMAL"". Fue el cuarto enemigo enemigo (Creo)
+-mini lore: no tiene bando, ataca cualquier cosa en su camino, nada lo detiene. Y tambien es el unico que habla ingles (porque si)
+-velocidad:0.50
+-velocidad en la version 2d: 5.2
+-daño:50
+-vida:inmortal (aunque tuvieras el arma en los modos "Dye of Deaf" y ""NORMAL"", no lo podrias matar porque su vida literalmente es infinito)
+
+espero que esto te pueda facilitar jugar :)
+</pre>
+    </div>
+</body>
+</html> 
