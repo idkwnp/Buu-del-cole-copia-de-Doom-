@@ -797,7 +797,11 @@ framesThisSecond++;
                         if (currentGameMode === 'april-normal') {
                             if (player.hp < 150) { player.hp = Math.min(150, player.hp + (en.userData.isImmortal ? 50 : en.userData.meleeDmg)); triggerFlash(0.4, 100, '#2ecc71'); }
                         } else if (!isShieldActive) { player.hp -= en.userData.meleeDmg; triggerFlash(0.7); shakeIntensity = 1.0; } 
-                        else audioBlockHit.cloneNode().play();
+                        else {
+    let hitSound = audioBlockHit.cloneNode();
+    hitSound.volume = parseFloat(document.getElementById('vol-slider').value);
+    hitSound.play();
+}
                         updateUI(); createDeathParticles(en.position, en.children[0].material.color.getHex()); scene.remove(en); enemies.splice(ei, 1); continue;
                     }
                 } else if (isStalkaze) {
